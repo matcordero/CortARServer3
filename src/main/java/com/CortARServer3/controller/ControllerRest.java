@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CortARServer3.entity.LoginDTO;
@@ -20,9 +21,9 @@ public class ControllerRest {
 	@Autowired
 	private usuarioService usuarios;
 
-	@GetMapping("/login")
-    public ResponseEntity<UsuariosEntity> Login(@RequestBody LoginDTO login){
-		UsuariosEntity usuario = this.usuarios.login(login);
+	@GetMapping(value = "/login")
+    public ResponseEntity<UsuariosEntity> Login(@RequestParam("username") String username,@RequestParam("password") String password){
+		UsuariosEntity usuario = this.usuarios.login(new LoginDTO(username,password));
 
         if(usuario != null){
             return new ResponseEntity<UsuariosEntity>(usuario, HttpStatus.OK);
