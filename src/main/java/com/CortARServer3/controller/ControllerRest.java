@@ -31,5 +31,8 @@ public class ControllerRest {
             return ResponseEntity.notFound().build();
         }
     }
-	
+	@GetMapping(value = "/GetAllUsuarios")
+	public ResponseEntity<?> getAllRegistros(){
+		return ResponseEntity.status(HttpStatus.OK).body(usuarios.findAll());
+	}
 }

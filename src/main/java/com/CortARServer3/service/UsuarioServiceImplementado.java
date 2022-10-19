@@ -1,5 +1,6 @@
 package com.CortARServer3.service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,5 +37,10 @@ public class UsuarioServiceImplementado implements usuarioService{
             }
         }
     }
+
+	@Override
+	public List<UsuariosEntity> findAll() {
+		return usuariosRepository.findAll();
+	}
 
 }
