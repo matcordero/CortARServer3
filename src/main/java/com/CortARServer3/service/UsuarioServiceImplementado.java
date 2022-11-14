@@ -43,4 +43,14 @@ public class UsuarioServiceImplementado implements usuarioService{
 		return usuariosRepository.findAll();
 	}
 
+	@Override
+	public Optional<UsuariosEntity> findById(String correo) {
+		return usuariosRepository.findById(correo);
+	}
+
+	@Override
+	public UsuariosEntity save(UsuariosEntity usuariosEntity) {
+		return usuariosRepository.save(usuariosEntity);
+	}
+
 }
