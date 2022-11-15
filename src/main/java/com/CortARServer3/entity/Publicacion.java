@@ -46,6 +46,9 @@ public class Publicacion {
 	@Column(name = "foto")
 	private String foto;
 	
+	@Column(name = "zona")
+	private String zona;
+	
 	@Column(name = "fecha")
 	private LocalDateTime fecha;
 	
@@ -130,6 +133,14 @@ public class Publicacion {
 
 	public void setFoto(String foto) {
 		this.foto = foto;
+	}
+
+	public String getZona() {
+		return zona;
+	}
+
+	public void setZona(String zona) {
+		this.zona = zona;
 	}
 
 	public LocalDateTime getFecha() {

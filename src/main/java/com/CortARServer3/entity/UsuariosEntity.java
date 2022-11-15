@@ -48,6 +48,11 @@ public class UsuariosEntity {
 	@Cascade(CascadeType.ALL)
 	private List<Publicacion> publicaciones = new ArrayList<>();
 	
+	@OneToMany(mappedBy = "usuario")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@Cascade(CascadeType.ALL)
+	private List<ZonasUsuario> zonas = new ArrayList<>();
+	
 	public UsuariosEntity(String correo, String contraseña, String nick) {
 		super();
 		this.correo = correo;
