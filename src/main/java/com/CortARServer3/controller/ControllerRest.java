@@ -1,6 +1,8 @@
 package com.CortARServer3.controller;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,87 +20,172 @@ import org.springframework.web.bind.annotation.RestController;
 import com.CortARServer3.entity.Comentario;
 import com.CortARServer3.entity.LoginDTO;
 import com.CortARServer3.entity.Publicacion;
+import com.CortARServer3.entity.Usuario;
 import com.CortARServer3.entity.UsuariosEntity;
+import com.CortARServer3.entity.enums.Zonas;
 import com.CortARServer3.service.ComentarioService;
 import com.CortARServer3.service.PublicacionService;
-import com.CortARServer3.service.UsuarioServiceImplementado;
-import com.CortARServer3.service.usuarioService;
+import com.CortARServer3.service.UsuarioService;
+import com.CortARServer3.service.UsuariosServiceImplementado;
+import com.CortARServer3.service.usuariosService;
+import com.CortARServer3.view.PublicacionView;
 
 @RestController
 @RequestMapping("/Seminario/Controller")
 public class ControllerRest {
 	
 	@Autowired
-	private usuarioService usuarios;
+	private usuariosService usuarios;
 	@Autowired
 	private PublicacionService publicacionService;
 	@Autowired
 	private ComentarioService comentarioService;
-
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	//Usuarios-----------------------------------------------------
-	@GetMapping(value = "/login")
-    public ResponseEntity<?> Login(@RequestParam("username") String username,@RequestParam("password") String password){
-		UsuariosEntity usuario = this.usuarios.login(new LoginDTO(username,password));
-
-        if(usuario != null){
-        	return ResponseEntity.status(HttpStatus.OK).body(usuario.toView());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+	@GetMapping(value = "/Login")
+    public ResponseEntity<?> login(@RequestParam("mail") String mail,@RequestParam("contrasena") String contrasena){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (oUsuario.isPresent()) {
+			Usuario usuarioActual = oUsuario.get();
+			if(usuarioActual.getContraseña() == contrasena.hashCode()) {
+				UUID randomUUID = UUID.randomUUID();
+				String ramdomStr = randomUUID.toString().replace("-", "");
+				usuarioActual.setKey(ramdomStr);
+				usuarioService.save(usuarioActual);
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(usuarioActual.toView());
+			}
+			else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario o Contraseña Incorrecto");
+			}
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario o Contraseña Incorrecto");
+		}
     }
 	
-	@GetMapping(value = "/GetUsuario")
-	public ResponseEntity<?> getUsuario(@RequestParam("correo") String correo){
-		Optional<UsuariosEntity> oUsuario = usuarios.findById(correo);
+	@PostMapping(value = "/CrearUsuario")
+	public ResponseEntity<?> postCrearUsuario(@RequestParam("mail") String mail,@RequestParam("contrasena") String contrasena,@RequestParam("nombre") String nombre){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent()) {
-			return ResponseEntity.status(HttpStatus.OK).body(oUsuario.get().toViewPublicacion());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El Usuario ya existe");
 		}
-		return ResponseEntity.notFound().build();
+		int ContraEncriptada = contrasena.hashCode();
+		Usuario usuario = new Usuario(mail,nombre,ContraEncriptada);
+		usuarioService.save(usuario);
+		return ResponseEntity.status(HttpStatus.OK).body("Usuario Creado con Exito");
 	}
 	
-	@GetMapping(value = "/GetAllUsuarios")
-	public ResponseEntity<?> getAllUsuarios(){
-		return ResponseEntity.status(HttpStatus.OK).body(usuarios.findAll());
-	}
-	
-	@PostMapping(value = "/PostCrearUsuario")
-	public ResponseEntity<?> postCrearUsuario(@RequestParam("correo") String correo,@RequestParam("contrasena") String contrasena,@RequestParam("nick") String nick){
-		Optional<UsuariosEntity> oUsuario = usuarios.findById(correo);
+	@GetMapping(value = "/GetInformationUsuario")
+    public ResponseEntity<?> getInformationUsuario(@RequestParam("mail") String mail,@RequestParam("key") String key){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent()) {
-			return ResponseEntity.notFound().build();
+			Usuario usuarioActual = oUsuario.get();
+			if(usuarioActual.getKey().equals(key)) {
+				return ResponseEntity.status(HttpStatus.OK).body(usuarioActual);
+			}
+			else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+			}
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(usuarios.save(new UsuariosEntity(correo,contrasena,nick)));
-	}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+    }
+	
+	@PutMapping(value = "/PutCambiarTipografia")
+    public ResponseEntity<?> getCambiarTipografia(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("tipografia") String tipografia){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
+			Usuario usuarioActual = oUsuario.get();
+			usuarioActual.setTipografia(tipografia);
+			usuarioService.save(usuarioActual);
+			return ResponseEntity.status(HttpStatus.OK).body("Tipografia Cambiada");
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+    }
+	
+	@PutMapping(value = "/PutCambiarTamanoLetra")
+    public ResponseEntity<?> getCambiarTamañoLetra(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("tamanoLetra") float tamanoLetra){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
+			Usuario usuarioActual = oUsuario.get();
+			usuarioActual.setTamanoFuente(tamanoLetra);
+			usuarioService.save(usuarioActual);
+			return ResponseEntity.status(HttpStatus.OK).body("Tamaño Letra Cambiada");
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+    }
+	
+	@PutMapping(value = "/PutCambiarContraseña")
+    public ResponseEntity<?> getCambiarTamañoLetra(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("contrasenaVieja") String contrasenaVieja,@RequestParam("contrasenaNueva") String contrasenaNueva){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
+			Usuario usuarioActual = oUsuario.get();
+			if(usuarioActual.getContraseña() == contrasenaVieja.hashCode()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contraseña vieja Incorrecta");
+			}
+			usuarioActual.setContraseña(contrasenaNueva.hashCode());
+			usuarioService.save(usuarioActual);
+			return ResponseEntity.status(HttpStatus.OK).body("Contraseña Cambiada");
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+    }
 	
 	//Publicaciones-----------------------------------------------------
 	
 	@PostMapping(value = "/PostPublicacion")
-	public ResponseEntity<?> postPublicaion(@RequestParam("texto") String texto,@RequestParam("correo") String correo){
-		Optional<UsuariosEntity> oUsuario = usuarios.findById(correo);
-		if (oUsuario.isPresent()) {
-			return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(new Publicacion(oUsuario.get(),texto)));
+	public ResponseEntity<?> postPublicaion(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("zona") String zona){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
 		}
-		return ResponseEntity.notFound().build();
+		if (!Zonas.list().contains(zona)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Zona Invalida");
+		}
+		Usuario usuario = oUsuario.get();
+		Publicacion publicacion = new Publicacion(usuario, texto,zona);
+		return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion).toView());
 	}
 	
 	
 	@GetMapping(value ="/GetAllPublicaciones")
-	public ResponseEntity<?> getALLPublicaciones(){
-		return ResponseEntity.status(HttpStatus.OK).body(publicacionService.findAll());
+	public ResponseEntity<?> getALLPublicaciones(@RequestParam("mail") String mail,@RequestParam("key") String key){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+		List<Publicacion> publicaciones = publicacionService.findAll2();
+		List<PublicacionView> pubViews = publicaciones.stream().map(x -> x.toView()).toList();
+		return ResponseEntity.status(HttpStatus.OK).body(pubViews);
 	}
 	
 	@GetMapping(value = "/GetPublicacionesByUsuario/{correo}")
-	public ResponseEntity<?> getPublicacionesByUsuario(@PathVariable String correo){
-		Optional<UsuariosEntity> oUsuario = usuarios.findById(correo);
-		if (oUsuario.isPresent()) {
-			return ResponseEntity.status(HttpStatus.OK).body(oUsuario.get().toViewPublicacion());
+	public ResponseEntity<?> getPublicacionesByUsuario(@PathVariable String correo,@RequestParam("mail") String mail,@RequestParam("key") String key){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
 		}
-		return ResponseEntity.notFound().build();
+		Optional<Usuario> oUsuarioPublicacion = usuarioService.findById(correo);
+		if (oUsuarioPublicacion.isPresent()) {
+			return ResponseEntity.status(HttpStatus.OK).body(oUsuarioPublicacion.get().toViewPublicacion());
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este Usuario No Existe");
 	}
 	
 	@DeleteMapping(value = "/DeletePublicacion/{id}")
-	public ResponseEntity<?> deletePublicacion(@PathVariable Integer id){
+	public ResponseEntity<?> deletePublicacion(@PathVariable Integer id,@RequestParam("mail") String mail,@RequestParam("key") String key){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
 		Optional<Publicacion> oPublicacion = publicacionService.findById(id);
 		if(oPublicacion.isPresent()) {
 			Publicacion publicacion=oPublicacion.get();
@@ -110,12 +197,16 @@ public class ControllerRest {
 	}
 	
 	@PutMapping(value = "/ActualizarLikes")
-	public ResponseEntity<?> actualizarLikes(@RequestParam("id") Integer id,@RequestParam("likes") Integer likes){
+	public ResponseEntity<?> actualizarLikes(@RequestParam("id") Integer id,@RequestParam("likes") Integer likes,@RequestParam("mail") String mail,@RequestParam("key") String key){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
 		Optional<Publicacion> oPublicacion = publicacionService.findById(id);
 		if(oPublicacion.isPresent()) {
 			Publicacion publicacion=oPublicacion.get();
 			publicacion.modificarLike(likes);
-			return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion));
+			return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion).toView());
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Publicacion No Existia");
 	}
@@ -123,28 +214,40 @@ public class ControllerRest {
 	//Comentarios-----------------------------------------------------
 	
 	@PostMapping(value = "/PostComentario")
-	public ResponseEntity<?> postComentario(@RequestParam("texto") String texto,@RequestParam("correo") String correo,@RequestParam("idPublicacion") Integer idPublicacion){
-		Optional<UsuariosEntity> oUsuario = usuarios.findById(correo);
+	public ResponseEntity<?> postComentario(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("idPublicacion") Integer idPublicacion){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
 		Optional<Publicacion> oPublicacion = publicacionService.findById(idPublicacion);
-		if (oUsuario.isPresent() && oPublicacion.isPresent()) {
-			UsuariosEntity usuario = oUsuario.get();
+		if (oPublicacion.isPresent()) {
+			Usuario usuario = oUsuario.get();
 			Publicacion publicacion = oPublicacion.get();
 			Comentario comentario = new Comentario(publicacion,usuario,texto,"");
 			publicacion.addComentario(comentario);
-			return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion));
+			return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion).toView());
 		}
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Publicacion No Existia");
 	}
 	
 	@DeleteMapping(value = "/DeleteComentario/{id}")
-	public ResponseEntity<?> deleteComentario(@PathVariable Integer id){
+	public ResponseEntity<?> deleteComentario(@PathVariable Integer id,@RequestParam("mail") String mail,@RequestParam("key") String key){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
 		Optional<Comentario> oComentario = comentarioService.findById(id);
 		if(oComentario.isPresent()) {
-			Publicacion publicacion=oComentario.get().getPublicacion();
-			oComentario.get().eliminar();
+			Comentario comentario = oComentario.get();
+			Usuario usuario = oUsuario.get();
+			if (!comentario.getUsuario().equals(usuario)) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Comentario no Perteneciente a Este Usuario");
+			}
+			Publicacion publicacion=comentario.getPublicacion();
+			comentario.eliminar();
 			publicacionService.save(publicacion);
 			//comentarioService.deleteById(id);
-			comentarioService.deleteByComentario(oComentario.get());
+			comentarioService.deleteByComentario(comentario);
 			return ResponseEntity.status(HttpStatus.OK).body("Comentario Eliminado");
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Comentario No Existia");

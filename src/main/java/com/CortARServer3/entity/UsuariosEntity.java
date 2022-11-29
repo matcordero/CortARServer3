@@ -98,7 +98,7 @@ public class UsuariosEntity {
 	public void setPublicaciones(List<Publicacion> publicaciones) {
 		this.publicaciones = publicaciones;
 	}
-
+	/*
 	public UsuarioView toView() {
 		return new UsuarioView(correo,nick);
 	}
@@ -106,5 +106,5 @@ public class UsuariosEntity {
 	public UsuarioPublicacionesView toViewPublicacion() {
 		List<PublicacionView> publicacionesView = publicaciones.stream().map(x -> x.toView()).collect(Collectors.toList());
 		return new UsuarioPublicacionesView(correo,nick,publicacionesView);
-	}
+	}*/
 }

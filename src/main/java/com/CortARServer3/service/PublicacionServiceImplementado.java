@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.CortARServer3.entity.Publicacion;
 import com.CortARServer3.entity.UsuariosEntity;
+import com.CortARServer3.entity.enums.Zonas;
 import com.CortARServer3.repository.PublicacionRepository;
 
 @Service
@@ -52,6 +53,16 @@ public class PublicacionServiceImplementado implements PublicacionService{
 	public void deleteByPublicacion(Publicacion publicacion) {
 		publicacionRepository.delete(publicacion);
 		
+	}
+
+	@Override
+	public List<Publicacion> findByZona(Zonas zona) {
+		return publicacionRepository.findByZona(zona);
+	}
+
+	@Override
+	public List<Publicacion> findAll2() {
+		return publicacionRepository.findAll();
 	}
 
 }

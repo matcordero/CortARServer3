@@ -8,18 +8,18 @@ import java.util.List;
 
 public class PublicacionView {
 	private Integer idPublicacion;
-	private UsuarioView usuario;
+	private String nombre;
 	private String texto;
 	private String foto;
 	private LocalDateTime fecha;
 	private Integer like;
 	private List<ComentarioView> comentarios;
 	
-	public PublicacionView(Integer idPublicacion, UsuarioView usuario, String texto, String foto, LocalDateTime fecha,
+	public PublicacionView(Integer idPublicacion, String nombre, String texto, String foto, LocalDateTime fecha,
 			Integer like, List<ComentarioView> comentarios) {
 		super();
 		this.idPublicacion = idPublicacion;
-		this.usuario = usuario;
+		this.nombre = nombre;
 		this.texto = texto;
 		this.foto = foto;
 		this.fecha = fecha;
@@ -35,12 +35,14 @@ public class PublicacionView {
 		this.idPublicacion = idPublicacion;
 	}
 
-	public UsuarioView getUsuario() {
-		return usuario;
+
+
+	public String getNombre() {
+		return nombre;
 	}
 
-	public void setUsuario(UsuarioView usuario) {
-		this.usuario = usuario;
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 
 	public String getTexto() {

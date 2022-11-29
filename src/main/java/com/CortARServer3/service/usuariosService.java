@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.CortARServer3.entity.LoginDTO;
 import com.CortARServer3.entity.UsuariosEntity;
 
-public interface usuarioService {
+public interface usuariosService {
 	Optional<UsuariosEntity> findById(String correo);
 	
 	UsuariosEntity login(LoginDTO login);

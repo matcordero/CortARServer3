@@ -8,10 +8,13 @@ import org.springframework.data.domain.Pageable;
 
 import com.CortARServer3.entity.Publicacion;
 import com.CortARServer3.entity.UsuariosEntity;
+import com.CortARServer3.entity.enums.Zonas;
 
 
 public interface PublicacionService {
 	public Iterable<Publicacion> findAll();
+	
+	public List<Publicacion> findAll2();
 	
 	public Page<Publicacion> findAll(Pageable pageable);
 	
@@ -24,4 +27,6 @@ public interface PublicacionService {
 	public void deleteByPublicacion(Publicacion publicacion);
 	
 	public List<Publicacion> findByUsuario(UsuariosEntity usuario);
+	
+	public List<Publicacion> findByZona(Zonas zona);
 }

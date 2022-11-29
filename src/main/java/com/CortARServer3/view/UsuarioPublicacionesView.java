@@ -3,33 +3,33 @@ package com.CortARServer3.view;
 import java.util.List;
 
 public class UsuarioPublicacionesView {
-	private String correo;
+	private String mail;
 
-	private String nick;
+	private String nombre;
 	
 	private List<PublicacionView> publicaciones;
 
-	public UsuarioPublicacionesView(String correo, String nick, List<PublicacionView> publicaciones) {
+	public UsuarioPublicacionesView(String mail, String nombre, List<PublicacionView> publicaciones) {
 		super();
-		this.correo = correo;
-		this.nick = nick;
+		this.mail = mail;
+		this.nombre = nombre;
 		this.publicaciones = publicaciones;
 	}
 
-	public String getCorreo() {
-		return correo;
+	public String getMail() {
+		return mail;
 	}
 
 	public void setCorreo(String correo) {
-		this.correo = correo;
+		this.mail = correo;
 	}
 
-	public String getNick() {
-		return nick;
+	public String getNombre() {
+		return nombre;
 	}
 
 	public void setNick(String nick) {
-		this.nick = nick;
+		this.nombre = nick;
 	}
 
 	public List<PublicacionView> getPublicaciones() {

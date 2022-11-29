@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,6 +25,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import com.CortARServer3.entity.enums.Zonas;
 import com.CortARServer3.view.ComentarioView;
 import com.CortARServer3.view.PublicacionView;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -33,12 +36,12 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class Publicacion {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name = "idpublicaciones")
+	@Column(name = "idPublicacion")
 	private Integer idPublicacion;
 	
 	@ManyToOne
-	@JoinColumn(name = "correo")
-	private UsuariosEntity usuario;
+	@JoinColumn(name = "mail")
+	private Usuario usuario;
 	
 	@Column(name = "texto")
 	private String texto;
@@ -65,13 +68,14 @@ public class Publicacion {
 		
 	}
 
-	public Publicacion(UsuariosEntity usuario, String texto) {
+	public Publicacion(Usuario usuario, String texto, String zona) {
 		super();
 		this.usuario = usuario;
 		this.texto = texto;
 		this.fecha = LocalDateTime.now();
 		this.foto = "";
 		this.like = 0;
+		this.zona = zona;
 	}
 
 	public void eliminarComentario(Comentario comentario) {
@@ -86,9 +90,10 @@ public class Publicacion {
 		this.comentarios.add(comentario);
 	}
 	
+	
 	public PublicacionView toView() {
 		List<ComentarioView> comentariosView = comentarios.stream().map(x -> x.toView()).collect(Collectors.toList());
-		return new PublicacionView(idPublicacion,usuario.toView(),texto,foto,fecha,like,comentariosView);
+		return new PublicacionView(idPublicacion,usuario.getNombre(),texto,foto,fecha,like,comentariosView);
 	}
 	
 	
@@ -100,12 +105,12 @@ public class Publicacion {
 		this.comentarios = comentarios;
 	}
 
-	public UsuariosEntity getUsuario() {
+	public Usuario getUsuario() {
 		return usuario;
 	}
 
 
-	public void setUsuario(UsuariosEntity usuario) {
+	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
 

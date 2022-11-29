@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 public class Comentario {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name = "idComentarios")
+	@Column(name = "idComentario")
 	private Integer idComentario;
 	
 	@ManyToOne
@@ -35,8 +35,8 @@ public class Comentario {
 	private Publicacion publicacion;
 	
 	@ManyToOne
-	@JoinColumn(name = "correo")
-	private UsuariosEntity usuario;
+	@JoinColumn(name = "mail")
+	private Usuario usuario;
 	
 	@Column(name = "texto")
 	private String texto;
@@ -54,7 +54,7 @@ public class Comentario {
 		
 	}
 	
-	public Comentario(Publicacion publicacion, UsuariosEntity usuario, String texto, String foto) {
+	public Comentario(Publicacion publicacion, Usuario usuario, String texto, String foto) {
 		super();
 		this.publicacion = publicacion;
 		this.usuario = usuario;
@@ -73,6 +73,7 @@ public class Comentario {
 		this.like=this.like+like;
 	}
 
+	
 	public ComentarioView toView() {
 		return new ComentarioView(idComentario,usuario.toView(),texto,foto,fecha,like);
 	}
@@ -93,11 +94,11 @@ public class Comentario {
 		this.publicacion = publicacion;
 	}
 
-	public UsuariosEntity getUsuario() {
+	public Usuario getUsuario() {
 		return usuario;
 	}
 
-	public void setUsuario(UsuariosEntity usuario) {
+	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
 
