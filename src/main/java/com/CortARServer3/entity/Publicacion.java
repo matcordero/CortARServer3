@@ -49,6 +49,9 @@ public class Publicacion {
 	@Column(name = "foto")
 	private String foto;
 	
+	@Column(name = "idFoto")
+	private String idFoto;
+	
 	@Column(name = "zona")
 	private String zona;
 	
@@ -68,14 +71,15 @@ public class Publicacion {
 		
 	}
 
-	public Publicacion(Usuario usuario, String texto, String zona) {
+	public Publicacion(Usuario usuario, String texto, String zona,String foto,String idFoto) {
 		super();
 		this.usuario = usuario;
 		this.texto = texto;
 		this.fecha = LocalDateTime.now();
-		this.foto = "";
+		this.foto = foto;
 		this.like = 0;
 		this.zona = zona;
+		this.idFoto = idFoto;
 	}
 
 	public void eliminarComentario(Comentario comentario) {
@@ -97,6 +101,16 @@ public class Publicacion {
 	}
 	
 	
+	
+	
+	public String getIdFoto() {
+		return idFoto;
+	}
+
+	public void setIdFoto(String idFoto) {
+		this.idFoto = idFoto;
+	}
+
 	public List<Comentario> getComentarios() {
 		return comentarios;
 	}

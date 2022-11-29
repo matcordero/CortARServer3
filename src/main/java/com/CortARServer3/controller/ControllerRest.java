@@ -1,6 +1,8 @@
 package com.CortARServer3.controller;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.CortARServer3.entity.Comentario;
 import com.CortARServer3.entity.LoginDTO;
@@ -23,6 +26,7 @@ import com.CortARServer3.entity.Publicacion;
 import com.CortARServer3.entity.Usuario;
 import com.CortARServer3.entity.UsuariosEntity;
 import com.CortARServer3.entity.enums.Zonas;
+import com.CortARServer3.service.CloudinaryService;
 import com.CortARServer3.service.ComentarioService;
 import com.CortARServer3.service.PublicacionService;
 import com.CortARServer3.service.UsuarioService;
@@ -42,6 +46,25 @@ public class ControllerRest {
 	private ComentarioService comentarioService;
 	@Autowired
 	private UsuarioService usuarioService;
+	@Autowired
+	private CloudinaryService cloudinaryService;
+	
+	//Cloudinary-------------------------
+	
+	@PostMapping(value = "/upload")
+	public ResponseEntity<?> upload(@RequestParam MultipartFile multipartFile) throws IOException{
+		Map result = cloudinaryService.upload(multipartFile);
+		System.out.println(result.get("url"));
+		System.out.println(result.get("public_id"));
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(result); 
+	}
+	
+	@DeleteMapping(value = "/delete/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") String id) throws IOException{
+		Map result = cloudinaryService.delete(id);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(result); 
+	}	
+	
 	
 	//Usuarios-----------------------------------------------------
 	@GetMapping(value = "/Login")
@@ -139,6 +162,23 @@ public class ControllerRest {
 		}
     }
 	
+	@PutMapping(value = "/PutCambiarFotoPerfil")
+    public ResponseEntity<?> getCambiarFotoPerfil(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam MultipartFile multipartFile) throws IOException{
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
+			Usuario usuarioActual = oUsuario.get();
+			Map result = cloudinaryService.upload(multipartFile);
+			usuarioActual.setFotoPerfil(result.get("url").toString());
+			usuarioActual.setIdFoto(result.get("public_id").toString());
+			return ResponseEntity.status(HttpStatus.OK).body(usuarioService.save(usuarioActual));
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+    }
+	
+	
+	
 	//Publicaciones-----------------------------------------------------
 	
 	@PostMapping(value = "/PostPublicacion")
@@ -151,10 +191,24 @@ public class ControllerRest {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Zona Invalida");
 		}
 		Usuario usuario = oUsuario.get();
-		Publicacion publicacion = new Publicacion(usuario, texto,zona);
+		Publicacion publicacion = new Publicacion(usuario, texto,zona,"","");
 		return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion).toView());
 	}
 	
+	@PostMapping(value = "/PostPublicacionFoto")
+	public ResponseEntity<?> postPublicaionFoto(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("zona") String zona,@RequestParam MultipartFile multipartFile) throws IOException{
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+		if (!Zonas.list().contains(zona)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Zona Invalida");
+		}
+		Usuario usuario = oUsuario.get();
+		Map result = cloudinaryService.upload(multipartFile);
+		Publicacion publicacion = new Publicacion(usuario, texto,zona,result.get("url").toString(),result.get("public_id").toString());
+		return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion).toView());
+	}
 	
 	@GetMapping(value ="/GetAllPublicaciones")
 	public ResponseEntity<?> getALLPublicaciones(@RequestParam("mail") String mail,@RequestParam("key") String key){

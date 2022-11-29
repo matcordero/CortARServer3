@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public class ComentarioView {
 	private Integer idComentario;
 
-	private UsuarioView usuario;
+	private String usuario;
 
 	private String texto;
 
@@ -16,7 +16,7 @@ public class ComentarioView {
 
 	private Integer like;
 
-	public ComentarioView(Integer idComentario, UsuarioView usuario, String texto, String foto, LocalDateTime fecha,
+	public ComentarioView(Integer idComentario, String usuario, String texto, String foto, LocalDateTime fecha,
 			Integer like) {
 		super();
 		this.idComentario = idComentario;
@@ -35,11 +35,11 @@ public class ComentarioView {
 		this.idComentario = idComentario;
 	}
 
-	public UsuarioView getUsuario() {
+	public String getUsuario() {
 		return usuario;
 	}
 
-	public void setUsuario(UsuarioView usuario) {
+	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
 

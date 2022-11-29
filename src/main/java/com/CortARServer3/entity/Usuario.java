@@ -34,6 +34,9 @@ public class Usuario {
 	@Column(name = "fotoPerfil")
 	private String fotoPerfil;
 	
+	@Column(name = "idFoto")
+	private String idFoto;
+	
 	@JsonIgnore
 	@Column(name = "contrasena", nullable = false)
 	private int contraseña;
@@ -73,6 +76,22 @@ public class Usuario {
 
 	}
 	
+	public String getIdFoto() {
+		return idFoto;
+	}
+
+	public void setIdFoto(String idFoto) {
+		this.idFoto = idFoto;
+	}
+
+	public String getKeyValidate() {
+		return keyValidate;
+	}
+
+	public void setKeyValidate(String keyValidate) {
+		this.keyValidate = keyValidate;
+	}
+
 	public UsuarioPublicacionesView toViewPublicacion() {
 		List<PublicacionView> publicacionesView = publicaciones.stream().map(x -> x.toView()).collect(Collectors.toList());
 		return new UsuarioPublicacionesView(mail,nombre,publicacionesView);
@@ -91,7 +110,7 @@ public class Usuario {
 	}
 
 	public UsuarioView toView() {
-		return new UsuarioView(mail,nombre,keyValidate,tipografia,tamanoFuente);
+		return new UsuarioView(mail,nombre,keyValidate,tipografia,tamanoFuente,fotoPerfil);
 	}
 	
 	public String getMail() {

@@ -75,7 +75,7 @@ public class Comentario {
 
 	
 	public ComentarioView toView() {
-		return new ComentarioView(idComentario,usuario.toView(),texto,foto,fecha,like);
+		return new ComentarioView(idComentario,usuario.getNombre(),texto,foto,fecha,like);
 	}
 	
 	public Integer getIdComentario() {

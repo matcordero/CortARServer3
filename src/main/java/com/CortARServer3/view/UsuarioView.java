@@ -12,15 +12,32 @@ public class UsuarioView {
 	private String tipografia;
 
 	private float tamañoFuente;
+	
+	public String foto;
 
-	public UsuarioView(String mail, String nombre, String key, String tipografia, float tamañoFuente) {
+	public UsuarioView(String mail, String nombre, String key, String tipografia, float tamañoFuente,String foto) {
 		super();
 		this.mail = mail;
 		this.nombre = nombre;
 		this.key = key;
 		this.tipografia = tipografia;
 		this.tamañoFuente = tamañoFuente;
+		this.foto = foto;
 	}
+
+	
+	
+	public String getFoto() {
+		return foto;
+	}
+
+
+
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+
+
 
 	public String getMail() {
 		return mail;
