@@ -90,6 +90,9 @@ public class ControllerRest {
 	
 	@PostMapping(value = "/CrearUsuario")
 	public ResponseEntity<?> postCrearUsuario(@RequestParam("mail") String mail,@RequestParam("contrasena") String contrasena,@RequestParam("nombre") String nombre){
+		if(mail.equals("") || contrasena.equals("") || nombre.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El Usuario ya existe");
@@ -102,6 +105,9 @@ public class ControllerRest {
 	
 	@GetMapping(value = "/GetInformationUsuario")
     public ResponseEntity<?> getInformationUsuario(@RequestParam("mail") String mail,@RequestParam("key") String key){
+		if(mail.equals("") || key.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent()) {
 			Usuario usuarioActual = oUsuario.get();
@@ -119,6 +125,9 @@ public class ControllerRest {
 	
 	@PutMapping(value = "/PutCambiarTipografia")
     public ResponseEntity<?> getCambiarTipografia(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("tipografia") String tipografia){
+		if(mail.equals("") || key.equals("") || tipografia.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
 			Usuario usuarioActual = oUsuario.get();
@@ -133,6 +142,9 @@ public class ControllerRest {
 	
 	@PutMapping(value = "/PutCambiarTamanoLetra")
     public ResponseEntity<?> getCambiarTamañoLetra(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("tamanoLetra") float tamanoLetra){
+		if(mail.equals("") || key.equals("") || tamanoLetra==0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
 			Usuario usuarioActual = oUsuario.get();
@@ -147,6 +159,9 @@ public class ControllerRest {
 	
 	@PutMapping(value = "/PutCambiarNombre")
     public ResponseEntity<?> getCambiarNombre(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("nombre") String nombre){
+		if(mail.equals("") || key.equals("") || nombre.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
 			Usuario usuarioActual = oUsuario.get();
@@ -161,6 +176,9 @@ public class ControllerRest {
 	
 	@PutMapping(value = "/PutCambiarContraseña")
     public ResponseEntity<?> getCambiarTamañoLetra(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("contrasenaVieja") String contrasenaVieja,@RequestParam("contrasenaNueva") String contrasenaNueva){
+		if(mail.equals("") || key.equals("") || contrasenaVieja.equals("") || contrasenaNueva.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
 			Usuario usuarioActual = oUsuario.get();
@@ -178,6 +196,9 @@ public class ControllerRest {
 	
 	@PutMapping(value = "/PutCambiarFotoPerfil")
     public ResponseEntity<?> getCambiarFotoPerfil(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam MultipartFile multipartFile) throws IOException{
+		if(mail.equals("") || key.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
 			Usuario usuarioActual = oUsuario.get();
@@ -201,6 +222,9 @@ public class ControllerRest {
 	
 	@GetMapping(value = "/GetPublicacionesByZona/{zona}")
 	public ResponseEntity<?> getPublicacionesByZona(@PathVariable String zona){
+		if(zona.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		List<PublicacionView> pub = publicacionService.findByZona(zona).stream().map(x -> x.toView()).toList();
 		return ResponseEntity.status(HttpStatus.OK).body(pub);
 	}
@@ -208,6 +232,9 @@ public class ControllerRest {
 	
 	@PostMapping(value = "/PostPublicacion")
 	public ResponseEntity<?> postPublicaion(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("zona") String zona){
+		if(mail.equals("") || key.equals("") || texto.equals("") || zona.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
@@ -222,6 +249,9 @@ public class ControllerRest {
 	
 	@PostMapping(value = "/PostPublicacionFoto")
 	public ResponseEntity<?> postPublicaionFoto(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("zona") String zona,@RequestParam MultipartFile multipartFile) throws IOException{
+		if(mail.equals("") || key.equals("") || texto.equals("") || zona.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
@@ -237,6 +267,9 @@ public class ControllerRest {
 	
 	@GetMapping(value ="/GetAllPublicaciones")
 	public ResponseEntity<?> getALLPublicaciones(@RequestParam("mail") String mail,@RequestParam("key") String key){
+		if(mail.equals("") || key.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
@@ -248,6 +281,9 @@ public class ControllerRest {
 	
 	@GetMapping(value = "/GetPublicacionesByUsuario/{correo}")
 	public ResponseEntity<?> getPublicacionesByUsuario(@PathVariable String correo,@RequestParam("mail") String mail,@RequestParam("key") String key){
+		if(mail.equals("") || key.equals("") || correo.equals("")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
@@ -261,6 +297,9 @@ public class ControllerRest {
 	
 	@DeleteMapping(value = "/DeletePublicacion/{id}")
 	public ResponseEntity<?> deletePublicacion(@PathVariable Integer id,@RequestParam("mail") String mail,@RequestParam("key") String key){
+		if(mail.equals("") || key.equals("") || id<0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
@@ -277,6 +316,9 @@ public class ControllerRest {
 	
 	@PutMapping(value = "/ActualizarLikes")
 	public ResponseEntity<?> actualizarLikes(@RequestParam("id") Integer id,@RequestParam("likes") Integer likes,@RequestParam("mail") String mail,@RequestParam("key") String key){
+		if(mail.equals("") || key.equals("") || likes==0 || id<0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
@@ -294,6 +336,9 @@ public class ControllerRest {
 	
 	@PostMapping(value = "/PostComentario")
 	public ResponseEntity<?> postComentario(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("idPublicacion") Integer idPublicacion){
+		if(mail.equals("") || key.equals("") || texto.equals("") || idPublicacion<0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
@@ -311,6 +356,9 @@ public class ControllerRest {
 	
 	@PostMapping(value = "/PostComentarioFoto")
 	public ResponseEntity<?> postComentarioFoto(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("idPublicacion") Integer idPublicacion,@RequestParam MultipartFile multipartFile) throws IOException{
+		if(mail.equals("") || key.equals("") || texto.equals("") || idPublicacion<0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
@@ -329,6 +377,9 @@ public class ControllerRest {
 	
 	@DeleteMapping(value = "/DeleteComentario/{id}")
 	public ResponseEntity<?> deleteComentario(@PathVariable Integer id,@RequestParam("mail") String mail,@RequestParam("key") String key){
+		if(mail.equals("") || key.equals("") || id<0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos Vacios");
+		}
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
 		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
