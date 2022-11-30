@@ -49,6 +49,31 @@ public class ControllerRest {
 	@Autowired
 	private CloudinaryService cloudinaryService;
 	
+	class datos{
+		private Object objeto;
+		private int status;
+		public datos(Object objeto, int status) {
+			super();
+			this.objeto = objeto;
+			this.status = status;
+		}
+		public Object getObjeto() {
+			return objeto;
+		}
+		public void setObjeto(Object objeto) {
+			this.objeto = objeto;
+		}
+		public int getStatus() {
+			return status;
+		}
+		public void setStatus(int status) {
+			this.status = status;
+		}
+		
+		
+	}
+	
+	
 	//Cloudinary-------------------------
 	
 	@PostMapping(value = "/upload")
@@ -77,7 +102,7 @@ public class ControllerRest {
 				String ramdomStr = randomUUID.toString().replace("-", "");
 				usuarioActual.setKey(ramdomStr);
 				usuarioService.save(usuarioActual);
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body(usuarioActual.toView());
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(new datos(usuarioActual.toView(),202));
 			}
 			else {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario o Contraseña Incorrecto");
