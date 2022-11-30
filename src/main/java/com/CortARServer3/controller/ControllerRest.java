@@ -145,6 +145,20 @@ public class ControllerRest {
 		}
     }
 	
+	@PutMapping(value = "/PutCambiarNombre")
+    public ResponseEntity<?> getCambiarNombre(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("nombre") String nombre){
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (oUsuario.isPresent() && oUsuario.get().getKey().equals(key)) {
+			Usuario usuarioActual = oUsuario.get();
+			usuarioActual.setNombre(nombre);
+			usuarioService.save(usuarioActual);
+			return ResponseEntity.status(HttpStatus.OK).body("Nombre cambiado");
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+    }
+	
 	@PutMapping(value = "/PutCambiarContraseña")
     public ResponseEntity<?> getCambiarTamañoLetra(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("contrasenaVieja") String contrasenaVieja,@RequestParam("contrasenaNueva") String contrasenaNueva){
 		Optional<Usuario> oUsuario = usuarioService.findById(mail);
@@ -180,6 +194,12 @@ public class ControllerRest {
 	
 	
 	//Publicaciones-----------------------------------------------------
+	@GetMapping(value = "/GetZonas")
+	public ResponseEntity<?> getZonas(){
+		return ResponseEntity.status(HttpStatus.OK).body(Zonas.list());
+	}
+	
+	
 	
 	@PostMapping(value = "/PostPublicacion")
 	public ResponseEntity<?> postPublicaion(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("zona") String zona){
@@ -278,6 +298,24 @@ public class ControllerRest {
 			Usuario usuario = oUsuario.get();
 			Publicacion publicacion = oPublicacion.get();
 			Comentario comentario = new Comentario(publicacion,usuario,texto,"");
+			publicacion.addComentario(comentario);
+			return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion).toView());
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Publicacion No Existia");
+	}
+	
+	@PostMapping(value = "/PostComentarioFoto")
+	public ResponseEntity<?> postComentarioFoto(@RequestParam("mail") String mail,@RequestParam("key") String key,@RequestParam("texto") String texto,@RequestParam("idPublicacion") Integer idPublicacion,@RequestParam MultipartFile multipartFile) throws IOException{
+		Optional<Usuario> oUsuario = usuarioService.findById(mail);
+		if (!oUsuario.isPresent() || !oUsuario.get().getKey().equals(key)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo de Validacion");
+		}
+		Optional<Publicacion> oPublicacion = publicacionService.findById(idPublicacion);
+		if (oPublicacion.isPresent()) {
+			Usuario usuario = oUsuario.get();
+			Publicacion publicacion = oPublicacion.get();
+			Map result = cloudinaryService.upload(multipartFile);
+			Comentario comentario = new Comentario(publicacion,usuario,texto,result.get("url").toString(),result.get("public_id").toString());
 			publicacion.addComentario(comentario);
 			return ResponseEntity.status(HttpStatus.OK).body(publicacionService.save(publicacion).toView());
 		}

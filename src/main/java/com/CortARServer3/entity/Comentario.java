@@ -44,6 +44,9 @@ public class Comentario {
 	@Column(name = "foto")
 	private String foto;
 	
+	@Column(name = "idFoto")
+	private String idFoto;
+	
 	@Column(name = "fecha")
 	private LocalDateTime fecha;
 	
@@ -62,6 +65,17 @@ public class Comentario {
 		this.foto = foto;
 		this.fecha = LocalDateTime.now();
 		this.like = 0;
+	}
+	
+	public Comentario(Publicacion publicacion, Usuario usuario, String texto, String foto,String idFoto) {
+		super();
+		this.publicacion = publicacion;
+		this.usuario = usuario;
+		this.texto = texto;
+		this.foto = foto;
+		this.fecha = LocalDateTime.now();
+		this.like = 0;
+		this.idFoto = idFoto;
 	}
 	
 	public void eliminar() {
@@ -132,6 +146,14 @@ public class Comentario {
 
 	public void setLike(Integer like) {
 		this.like = like;
+	}
+
+	public String getIdFoto() {
+		return idFoto;
+	}
+
+	public void setIdFoto(String idFoto) {
+		this.idFoto = idFoto;
 	}
 	
 	
