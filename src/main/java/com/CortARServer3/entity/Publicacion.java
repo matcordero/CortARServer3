@@ -97,7 +97,7 @@ public class Publicacion {
 	
 	public PublicacionView toView() {
 		List<ComentarioView> comentariosView = comentarios.stream().map(x -> x.toView()).collect(Collectors.toList());
-		return new PublicacionView(idPublicacion,usuario.getNombre(),texto,foto,fecha,like,comentariosView);
+		return new PublicacionView(idPublicacion,usuario.getNombre(),texto,foto,fecha,like,zona,comentariosView);
 	}
 	
 	

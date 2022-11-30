@@ -13,10 +13,11 @@ public class PublicacionView {
 	private String foto;
 	private LocalDateTime fecha;
 	private Integer like;
+	private String zona;
 	private List<ComentarioView> comentarios;
 	
 	public PublicacionView(Integer idPublicacion, String nombre, String texto, String foto, LocalDateTime fecha,
-			Integer like, List<ComentarioView> comentarios) {
+			Integer like,String zona, List<ComentarioView> comentarios) {
 		super();
 		this.idPublicacion = idPublicacion;
 		this.nombre = nombre;
@@ -24,6 +25,7 @@ public class PublicacionView {
 		this.foto = foto;
 		this.fecha = fecha;
 		this.like = like;
+		this.zona = zona;
 		this.comentarios = comentarios;
 	}
 
@@ -36,6 +38,14 @@ public class PublicacionView {
 	}
 
 
+
+	public String getZona() {
+		return zona;
+	}
+
+	public void setZona(String zona) {
+		this.zona = zona;
+	}
 
 	public String getNombre() {
 		return nombre;

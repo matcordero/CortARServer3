@@ -199,6 +199,11 @@ public class ControllerRest {
 		return ResponseEntity.status(HttpStatus.OK).body(Zonas.list());
 	}
 	
+	@GetMapping(value = "/GetPublicacionesByZona/{zona}")
+	public ResponseEntity<?> getPublicacionesByZona(@PathVariable String zona){
+		List<PublicacionView> pub = publicacionService.findByZona(zona).stream().map(x -> x.toView()).toList();
+		return ResponseEntity.status(HttpStatus.OK).body(pub);
+	}
 	
 	
 	@PostMapping(value = "/PostPublicacion")

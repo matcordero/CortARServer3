@@ -65,4 +65,9 @@ public class PublicacionServiceImplementado implements PublicacionService{
 		return publicacionRepository.findAll();
 	}
 
+	@Override
+	public List<Publicacion> findByZona(String zona) {
+		return publicacionRepository.findByZona(zona);
+	}
+
 }

@@ -14,4 +14,6 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Intege
 	List<Publicacion> findByUsuario(UsuariosEntity usuario);
 	
 	List<Publicacion> findByZona(Zonas zona);
+	
+	List<Publicacion> findByZona(String zona);
 }

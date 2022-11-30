@@ -29,4 +29,6 @@ public interface PublicacionService {
 	public List<Publicacion> findByUsuario(UsuariosEntity usuario);
 	
 	public List<Publicacion> findByZona(Zonas zona);
+	
+	public List<Publicacion> findByZona(String zona);
 }
