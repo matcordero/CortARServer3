@@ -97,6 +97,7 @@ public class ControllerRest {
 		if (oUsuario.isPresent()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El Usuario ya existe");
 		}
+		System.out.print(contrasena);
 		int ContraEncriptada = contrasena.hashCode();
 		Usuario usuario = new Usuario(mail,nombre,ContraEncriptada);
 		usuarioService.save(usuario);
